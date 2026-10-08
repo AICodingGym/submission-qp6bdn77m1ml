@@ -563,6 +563,19 @@ def test_keep_attrs() -> None:
     assert_identical(actual.x.attrs, ds_a.x.attrs)
 
 
+def test_where_preserves_attrs() -> None:
+    data = xr.DataArray(np.ones((2, 2), dtype=np.int8))
+    data.attrs["attr_1"] = "test1"
+    data.attrs["attr_2"] = "test2"
+
+    cond = data == 1
+    assert_identical(cond.attrs, data.attrs)
+
+    actual = xr.where(cond, 5, 0)
+
+    assert_identical(actual.attrs, data.attrs)
+
+
 @pytest.mark.parametrize(
     ["strategy", "attrs", "expected", "error"],
     (

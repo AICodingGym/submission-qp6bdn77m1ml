@@ -2424,7 +2424,7 @@ class Variable(AbstractArray, NdimSizeLenMixin, VariableArithmetic):
             other_data, self_data, dims = _broadcast_compat_data(other, self)
         else:
             self_data, other_data, dims = _broadcast_compat_data(self, other)
-        keep_attrs = _get_keep_attrs(default=False)
+        keep_attrs = _get_keep_attrs(default=True)
         attrs = self._attrs if keep_attrs else None
         with np.errstate(all="ignore"):
             new_data = (
