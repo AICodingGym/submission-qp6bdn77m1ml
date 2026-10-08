@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import itertools
 import numbers
+import operator
 import warnings
 from collections import defaultdict
 from datetime import timedelta
@@ -71,6 +72,18 @@ BASIC_INDEXING_TYPES = integer_types + (slice,)
 
 if TYPE_CHECKING:
     from .types import T_Variable
+
+
+_COMPARISON_OPS = frozenset(
+    {
+        operator.lt,
+        operator.le,
+        operator.gt,
+        operator.ge,
+        nputils.array_eq,
+        nputils.array_ne,
+    }
+)
 
 
 class MissingDimensionsError(ValueError):
@@ -2424,7 +2437,7 @@ class Variable(AbstractArray, NdimSizeLenMixin, VariableArithmetic):
             other_data, self_data, dims = _broadcast_compat_data(other, self)
         else:
             self_data, other_data, dims = _broadcast_compat_data(self, other)
-        keep_attrs = _get_keep_attrs(default=True)
+        keep_attrs = _get_keep_attrs(default=f in _COMPARISON_OPS)
         attrs = self._attrs if keep_attrs else None
         with np.errstate(all="ignore"):
             new_data = (
