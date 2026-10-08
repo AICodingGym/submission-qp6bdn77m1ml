@@ -1744,9 +1744,10 @@ def where(cond, x, y, keep_attrs=None):
     y : scalar, array, Variable, DataArray or Dataset
         values to choose from where `cond` is False
     keep_attrs : bool, optional
-        If True, the attributes from the first xarray object are copied to the
-        result. If False, the result has no attributes. The default follows
-        the global ``keep_attrs`` option, with a default of True.
+        If True, attributes are copied from the first xarray object among
+        ``x``, ``y``, and ``cond``. If False, the result has no attributes.
+        The default follows the global ``keep_attrs`` option, with a default
+        of True.
 
     Returns
     -------
@@ -1817,10 +1818,10 @@ def where(cond, x, y, keep_attrs=None):
 
     # alignment for three arguments is complicated, so don't support it yet
     return apply_ufunc(
-        duck_array_ops.where,
-        cond,
+        lambda x, y, cond: duck_array_ops.where(cond, x, y),
         x,
         y,
+        cond,
         join="exact",
         dataset_join="exact",
         dask="allowed",
